@@ -1,0 +1,16 @@
+<html ng-app="myApp">
+<head>
+	<script src="bootstrap/js/angular.min.js"></script>
+	<script src="bootstrap/js/script.js"></script>
+</head>
+<body>
+<div ng-controller="myCtrl">
+	<div>
+		<input type="text" ng-model="name"/>
+	</div>
+	<div>
+		Hello {{name}}, I am "{{caller}}". Nice to meet you.
+	</div>
+</div>
+</body>
+</html>
