@@ -2,38 +2,17 @@ var app = angular.module('myApp', []);
 
 app.controller('myCtrl', function($scope,$http) {
 	
-//	$scope.varusername = $scope.usernamesss;
-//	$scope.employees = $scope.employees;
-//	$scope.headoffice =  $scope.headoffice;	
+
 var name=$scope.names;
 	
 	$scope.sayHello = function() {	
-//		alert($scope.names);
-		$scope.greeting = 'Hello ' + $scope.name + ', have a nice days';
-		
+		$scope.greeting = 'Hello ' + $scope.name + ', have a nice days';		
 	};
 
-/*	$scope.auth = function() {
-		$scope.varusername = $scope.username;		
-	};
-	$scope.auth2 = function() {
-		$scope.employees = $scope.employees;		
-	};
-	$scope.auth3 = function() {
-		$scope.headoffice =  $scope.headoffice;		
-	};
-	$scope.auth4 = function() {
-		$scope.message =  'Clicked';		
-	};
-*/
-	
-	
-	$scope.addRowAsyncAsJSON = function(){	
+
+/*	$scope.addRowAsyncAsJSON = function(){	
 		alert($scope.name);
-
-//		$scope.companies.push({ 'name':$scope.name, 'employees': $scope.employees, 'headoffice':$scope.headoffice });
-		// Writing it to the server
-		//		
+		
 		var dataObj = {
 				name : $scope.name,
 				employees : $scope.employees,
@@ -45,16 +24,83 @@ var name=$scope.names;
 		res.success(function(data, status, headers, config) {
 			$scope.message = data;
 		});
-		//alert('Message : ' + $scope.message);
+		
 		res.error(function(data, status, headers, config) {
 			alert( "failure message: " + JSON.stringify({data: data}));
 		});		
-		// Making the fields empty
-		//
+		
 		$scope.name='';
 		$scope.employees='';
 		$scope.headoffice='';
 	};
+	*/
+	
+	$scope.Items = [];
+    $scope.loadData = function(){
+    	
+         $http.get('http://localhost:4321/api/items').then(function(data){
+              $scope.Items = data.data;
+         })
+    }
+    $scope.loadData();
+    
+	$scope.orders = [];
+    $scope.loadOrderData = function(){
+    	
+         $http.get('http://localhost:4321/api/orders?userid=1').then(function(data){
+              $scope.orders = data.data;
+         })
+    }
+    $scope.loadOrderData();
+    
+    
+    
+    $scope.cartItems = []; 
+    $scope.totalAmount =0.0;
+    $scope.cartIndex = 0;
+    
+    $scope.addToCartAsJson = function($name,$id,$units,$price){
+    	
+    	$scope.cartItems.push({'id':$id, 'name':$name, 'quantity': $units, 'amount':$units*$price });
+    	$scope.unitVal = '';
+    	$scope.totalAmount = $scope.totalAmount + ($units*$price); 
+    	$scope.cartIndex ++;
+
+    };
+    
+    $scope.userId = 1;
+    $scope.submitCart = function(){  
+    	
+       $http.post("http://localhost:4321/api/neworder",  {list:$scope.cartItems, total:$scope.totalAmount, userId:$scope.userId}, {headers: {'Content-Type': 'application/json'} })
+       .then(function (response) {
+    	   $scope.cartItems = []; 
+           return response;
+       });
+       
+    };
+    
+    
+    $scope.getUserOrder = function(){  
+    	
+        $http.get("http://localhost:4321/api/userorder" )
+        .then(function (response) {
+        	$scope.userOrders = response.data;        	
+        });        
+     };
+     
+     
+     $scope.createUser = function($name,$username,$password){  
+    	 
+    	 alert($name+$username+$password);
+     	
+         $http.post("http://localhost:4321/api/createuser",  {name:$name, username:$username, password:$password}, {headers: {'Content-Type': 'application/json'} })
+         .then(function (response) {      	   
+             return response;
+             
+         });         
+      };
+     
+     
 
 	
 });
